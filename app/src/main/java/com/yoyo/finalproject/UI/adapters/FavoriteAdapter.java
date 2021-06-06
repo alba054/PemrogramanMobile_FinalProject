@@ -15,6 +15,8 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import com.yoyo.finalproject.R;
+import com.yoyo.finalproject.UI.adapters.clickListeners.OnFavoriteClickListener;
+import com.yoyo.finalproject.data.models.Favorite;
 //import com.yoyo.finalproject.data.models.Favorite;
 //import com.yoyo.finalproject.ui.adapters.clicklistener.OnFavoriteClickListener;
 

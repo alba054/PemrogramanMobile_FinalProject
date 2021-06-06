@@ -1,11 +1,12 @@
-package com.yoyo.finalproject.data.models.;
+package com.yoyo.finalproject.data.models;
 
 import com.google.gson.annotations.SerializedName;
-//import com.yoyo.tugas6.misc.Genre;
+import com.yoyo.finalproject.ImageSize;
+import com.yoyo.finalproject.data.models.Genre;
 
 import java.util.List;
 
-public class MovieDetail {
+public class Movie {
 
     @SerializedName("original_title")
     private String title;
@@ -50,7 +51,7 @@ public class MovieDetail {
         this.releaseDate = releaseDate;
     }
 
-    public String getPosterImage() {
+    public String getPosterImage(ImageSize w154) {
         return posterImage;
     }
 

@@ -15,15 +15,18 @@ import java.util.List;
 
 import com.yoyo.finalproject.ImageSize;
 import com.yoyo.finalproject.R;
-//import com.yoyo.finalproject.data.models.TvShow;
-//import com.yoyo.finalproject.ui.adapters.clicklistener.OnItemClickListener;
+import com.yoyo.finalproject.UI.adapters.clickListeners.OnItemClickListener;
+import com.yoyo.finalproject.data.models.Movie;
+import com.yoyo.finalproject.data.models.TvShow;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     private List<TvShow> tvShowList;
+    private List<Movie> movieList;
     private OnItemClickListener clickListener;
 
-    public TvShowAdapter(List<TvShow> tvShowList) {
+    public MainAdapter(List<TvShow> tvShowList, List<Movie> movieList) {
         this.tvShowList = tvShowList;
+        this.movieList = movieList;
     }
 
     public void setClickListener(OnItemClickListener clickListener) {
@@ -40,21 +43,31 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        viewHolder.onBindItemView(tvShowList.get(i));
+        if (tvShowList != null) {
+            viewHolder.onBindItemView(tvShowList.get(i));
+        } else {
+            viewHolder.onBindItemView(movieList.get(i));
+        }
+
     }
 
-    public void appendList(List<TvShow> listToAppend) {
-        tvShowList.addAll(listToAppend);
+    public void appendList(List<TvShow> tvShowListToAppend, List<Movie> movieListToAppend) {
+        if (tvShowListToAppend != null) {
+            tvShowList.addAll(tvShowListToAppend);
+        } else {
+            movieList.addAll(movieListToAppend);
+        }
         notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        return tvShowList.size();
+        return tvShowList != null ? tvShowList.size() : movieList.size() ;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TvShow tvShow;
+        Movie movie;
         ImageView ivPoster;
         TextView tvName;
 
@@ -67,15 +80,32 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
         void onBindItemView(TvShow tvShow) {
             this.tvShow = tvShow;
+            String imageUri = tvShow.getPosterPath(ImageSize.W154);
+            String title = tvShow.getName();
             Glide.with(itemView.getContext())
-                    .load(tvShow.getPosterPath(ImageSize.W154))
+                    .load(imageUri)
                     .into(ivPoster);
-            tvName.setText(tvShow.getName());
+            tvName.setText(title);
+        }
+
+        void onBindItemView(Movie movie) {
+            this.movie = movie;
+            String imageUri = movie.getPosterImage(ImageSize.W154);
+            String title = movie.getTitle();
+            Glide.with(itemView.getContext())
+                    .load(imageUri)
+                    .into(ivPoster);
+            tvName.setText(title);
         }
 
         @Override
         public void onClick(View view) {
-            clickListener.onClick(tvShow);
+            if (tvShow != null){
+                clickListener.onClick(tvShow);
+            } else {
+                clickListener.onClick(movie);
+            }
+
         }
     }
 }

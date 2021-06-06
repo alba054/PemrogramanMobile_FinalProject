@@ -10,7 +10,7 @@ import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.yoyo.finalproject.R;
-import com.yoyo.finalproject.UI.fragments.FavoriteFragment;
+//import com.yoyo.finalproject.UI.fragments.FavoriteFragment;
 import com.yoyo.finalproject.UI.fragments.MainFragment;
 
 public class MainActivity extends AppCompatActivity
@@ -55,18 +55,19 @@ public class MainActivity extends AppCompatActivity
         switch (menuItem.getItemId()) {
             case R.id.item_airing_today:
                 setActionBar(getString(R.string.airing_today), R.drawable.ic_airing_today_white);
-                sortBy = "movie";
+                sortBy = "airing_today";;
                 fragment = new MainFragment();
                 break;
             case R.id.item_popular:
                 setActionBar(getString(R.string.popular), R.drawable.ic_popular_white);
                 // TODO: pass filter
+                sortBy = "now_playing";
                 fragment = new MainFragment();
                 break;
-            case R.id.item_favorite:
-                setActionBar(getString(R.string.favorite), R.drawable.ic_favorite_white);
-                fragment = new FavoriteFragment();
-                break;
+//            case R.id.item_favorite:
+//                setActionBar(getString(R.string.favorite), R.drawable.ic_favorite_white);
+//                fragment = new FavoriteFragment();
+//                break;
         }
         if (fragment != null) {
             // Method that handle which data to show base on @sortBy params

@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 import com.yoyo.finalproject.Consts;
 import com.yoyo.finalproject.ImageSize;
 
+import java.util.List;
+
 public class TvShow {
     @SerializedName("backdrop_path")
     private String backdropPath;
@@ -29,6 +31,8 @@ public class TvShow {
     private float voteAverage;
     @SerializedName("vote_count")
     private int voteCount;
+    @SerializedName("genres")
+    private List<Genre> genres;
 
     public String getBackdropPath(ImageSize size) {
         return Consts.IMG_URL + size.getValue() + backdropPath;
@@ -76,5 +80,9 @@ public class TvShow {
 
     public int getVoteCount() {
         return voteCount;
+    }
+
+    public List<Genre> getGenres() {
+        return genres;
     }
 }

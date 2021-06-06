@@ -1,7 +1,9 @@
 package com.yoyo.finalproject.UI.adapters.clickListeners;
 
-//import id.ftrh.tvdiscoverv02.data.models.TvShow;
+import com.yoyo.finalproject.data.models.Movie;
+import com.yoyo.finalproject.data.models.TvShow;
 
 public interface OnItemClickListener {
     void onClick(TvShow tvShow);
+    void onClick(Movie movie);
 }

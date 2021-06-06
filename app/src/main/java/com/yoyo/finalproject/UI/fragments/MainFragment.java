@@ -23,21 +23,23 @@ import android.widget.TextView;
 import java.util.List;
 
 import com.yoyo.finalproject.R;
-//import com.yoyo.finalproject.data.api.repository.TvShowRepository;
-//import com.yoyo.finalproject.data.api.repository.callback.OnSearchCallback;
-//import com.yoyo.finalproject.data.api.repository.callback.OnTvShowCallback;
-//import com.yoyo.finalproject.data.models.TvShow;
-//import com.yoyo.finalproject.ui.activities.DetailActivity;
-//import com.yoyo.finalproject.ui.adapters.TvShowAdapter;
-//import com.yoyo.finalproject.ui.adapters.clicklistener.OnItemClickListener;
+import com.yoyo.finalproject.data.api.repository.TvShowRepository;
+import com.yoyo.finalproject.data.api.repository.callback.OnSearchCallback;
+import com.yoyo.finalproject.data.api.repository.callback.OnTvShowCallback;
+import com.yoyo.finalproject.data.models.Movie;
+import com.yoyo.finalproject.data.models.TvShow;
+import com.yoyo.finalproject.UI.activities.DetailActivity;
+import com.yoyo.finalproject.UI.adapters.MainAdapter;
+import com.yoyo.finalproject.UI.adapters.clickListeners.OnItemClickListener;
 
 public class MainFragment extends Fragment
         implements OnItemClickListener,
         SwipeRefreshLayout.OnRefreshListener,
         SearchView.OnQueryTextListener {
+
     private SwipeRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
-    private TvShowAdapter adapter;
+    private MainAdapter adapter;
     private TvShowRepository repository;
     private TextView tvError;
     private boolean isFetching;
@@ -109,16 +111,15 @@ public class MainFragment extends Fragment
         isFetching = true;
         if (query.equals("")) {
             repository.getTvShow(getBundle(), page, new OnTvShowCallback() {
-                @Override
-                public void onSuccess(int page, List<TvShow> tvShowList) {
+                public void onSuccess(int page, List<TvShow> tvShowList, List<Movie> movieList) {
                     // TODO: hide error text
                     if (adapter == null) {
-                        adapter = new TvShowAdapter(tvShowList);
-                        adapter.setClickListener(TvShowFragment.this);
+                        adapter = new MainAdapter(tvShowList, movieList);
+                        adapter.setClickListener(MainFragment.this);
                         adapter.notifyDataSetChanged();
                         recyclerView.setAdapter(adapter);
                     } else {
-                        adapter.appendList(tvShowList);
+                        adapter.appendList(tvShowList, movieList);
                     }
                     currentPage = page;
                     isFetching = false;
@@ -133,15 +134,15 @@ public class MainFragment extends Fragment
         } else {
             repository.search(query, page, new OnSearchCallback() {
                 @Override
-                public void onSuccess(List<TvShow> tvShowList, String msg, int page) {
+                public void onSuccess(List<TvShow> tvShowList, List<Movie> movieList, String msg, int page) {
                     // TODO: hide error text
                     if (adapter == null) {
-                        adapter = new TvShowAdapter(tvShowList);
-                        adapter.setClickListener(TvShowFragment.this);
+                        adapter = new MainAdapter(tvShowList, movieList);
+                        adapter.setClickListener(MainFragment.this);
                         adapter.notifyDataSetChanged();
                         recyclerView.setAdapter(adapter);
                     } else {
-                        adapter.appendList(tvShowList);
+                        adapter.appendList(tvShowList, movieList);
                     }
                     currentPage = page;
                     isFetching = false;
@@ -167,6 +168,14 @@ public class MainFragment extends Fragment
     public void onClick(TvShow tvShow) {
         Intent detailActivity = new Intent(getContext(), DetailActivity.class);
         detailActivity.putExtra("ID", tvShow.getId());
+        detailActivity.putExtra("SELECTED_FRAGMENT", getBundle());
+        startActivity(detailActivity);
+    }
+
+    @Override
+    public void onClick(Movie movie) {
+        Intent detailActivity = new Intent(getContext(), DetailActivity.class);
+        detailActivity.putExtra("ID", movie.getId());
         detailActivity.putExtra("SELECTED_FRAGMENT", getBundle());
         startActivity(detailActivity);
     }
