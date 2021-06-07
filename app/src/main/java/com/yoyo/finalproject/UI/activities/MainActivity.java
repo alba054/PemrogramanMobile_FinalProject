@@ -55,13 +55,13 @@ public class MainActivity extends AppCompatActivity
         switch (menuItem.getItemId()) {
             case R.id.item_airing_today:
                 setActionBar(getString(R.string.airing_today), R.drawable.ic_airing_today_white);
-                sortBy = "airing_today";;
+                sortBy = "tv_show";;
                 fragment = new MainFragment();
                 break;
             case R.id.item_popular:
                 setActionBar(getString(R.string.popular), R.drawable.ic_popular_white);
                 // TODO: pass filter
-                sortBy = "now_playing";
+                sortBy = "movie";
                 fragment = new MainFragment();
                 break;
 //            case R.id.item_favorite:

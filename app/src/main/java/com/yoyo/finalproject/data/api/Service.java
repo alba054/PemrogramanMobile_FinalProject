@@ -1,6 +1,8 @@
 package com.yoyo.finalproject.data.api;
 
 
+import com.yoyo.finalproject.data.models.Movie;
+import com.yoyo.finalproject.data.models.MovieResponse;
 import com.yoyo.finalproject.data.models.TvShow;
 import com.yoyo.finalproject.data.models.TvShowResponse;
 
@@ -10,26 +12,47 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface Service {
-    @GET("tv/{sort_by}")
-    Call<TvShowResponse> getResults(
-            @Path("sort_by") String sortBy,
+    @GET("tv/airing_today")
+    Call<TvShowResponse> getTvResults(
             @Query("api_key") String apiKey,
             @Query("language") String language,
             @Query("page") int page
     );
 
     @GET("tv/{id}")
-    Call<TvShow> getDetail(
+    Call<TvShow> getTvDetail(
             @Path("id") int id,
             @Query("api_key") String apiKey,
             @Query("language") String language
     );
 
     @GET("search/tv")
-    Call<TvShowResponse> search(
+    Call<TvShowResponse> searchTV(
             @Query("api_key") String apiKey,
             @Query("query") String query,
             @Query("language") String language,
             @Query("page") int page
+    );
+
+    @GET("movie/now_playing")
+    Call<MovieResponse> getMovieResults(
+            @Query("api_key") String apiKey,
+            @Query("language") String language,
+            @Query("page") int page
+    );
+
+    @GET("search/movie")
+    Call<MovieResponse> searchMovie(
+            @Query("api_key") String apiKey,
+            @Query("query") String query,
+            @Query("language") String language,
+            @Query("page") int page
+    );
+
+    @GET("movie/{id}")
+    Call<Movie> getMovieDetail(
+            @Path("id") int id,
+            @Query("api_key") String apiKey,
+            @Query("language") String language
     );
 }

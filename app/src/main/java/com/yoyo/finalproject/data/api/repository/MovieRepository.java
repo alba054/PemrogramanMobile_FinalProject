@@ -7,11 +7,11 @@ import androidx.annotation.NonNull;
 
 import com.yoyo.finalproject.Consts;
 import com.yoyo.finalproject.data.api.Service;
+import com.yoyo.finalproject.data.api.repository.callback.OnMovieCallback;
+import com.yoyo.finalproject.data.api.repository.callback.OnMovieDetailCallback;
 import com.yoyo.finalproject.data.api.repository.callback.OnSearchCallback;
-import com.yoyo.finalproject.data.api.repository.callback.OnTvDetailCallback;
-import com.yoyo.finalproject.data.api.repository.callback.OnTvShowCallback;
-import com.yoyo.finalproject.data.models.TvShow;
-import com.yoyo.finalproject.data.models.TvShowResponse;
+import com.yoyo.finalproject.data.models.Movie;
+import com.yoyo.finalproject.data.models.MovieResponse;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -19,34 +19,25 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class TvShowRepository {
-    private static TvShowRepository repository;
+public class MovieRepository {
+    private static MovieRepository repository;
     private Service service;
 
-    private TvShowRepository(Service service) {
+    private MovieRepository(Service service) {
         this.service = service;
     }
 
-    public static TvShowRepository getInstance() {
-        if (repository == null) {
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(Consts.BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            repository = new TvShowRepository(retrofit.create(Service.class));
-        }
-        return repository;
-    }
 
-    public void getTvShow(int page, final OnTvShowCallback callback) {
-        service.getTvResults(Consts.API_KEY, Consts.getLang(), page)
-                .enqueue(new Callback<TvShowResponse>() {
+
+    public void getMovie(int page, final OnMovieCallback callback) {
+        service.getMovieResults(Consts.API_KEY, Consts.getLang(), page)
+                .enqueue(new Callback<MovieResponse>() {
                     @Override
-                    public void onResponse(@NonNull Call<TvShowResponse> call, @NonNull Response<TvShowResponse> response) {
+                    public void onResponse(@NonNull Call<MovieResponse> call, @NonNull Response<MovieResponse> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 if (response.body().getResults() != null) {
-                                    Log.d("TV Show Response", response.body().getResults().toString());
+
                                     callback.onSuccess(response.body().getPage(), response.body().getResults());
                                 } else {
                                     callback.onFailure("response.body().getResults() is null");
@@ -60,17 +51,17 @@ public class TvShowRepository {
                     }
 
                     @Override
-                    public void onFailure(@NonNull Call<TvShowResponse> call, @NonNull Throwable t) {
+                    public void onFailure(@NonNull Call<MovieResponse> call, @NonNull Throwable t) {
                         callback.onFailure(t.getLocalizedMessage());
                     }
                 });
     }
 
-    public void getTvDetail(int id, final OnTvDetailCallback callback) {
-        service.getTvDetail(id, Consts.API_KEY, Consts.getLang())
-                .enqueue(new Callback<TvShow>() {
+    public void getTvDetail(int id, final OnMovieDetailCallback callback) {
+        service.getMovieDetail(id, Consts.API_KEY, Consts.getLang())
+                .enqueue(new Callback<Movie>() {
                     @Override
-                    public void onResponse(@NonNull Call<TvShow> call, @NonNull Response<TvShow> response) {
+                    public void onResponse(@NonNull Call<Movie> call, @NonNull Response<Movie> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 callback.onSuccess(response.body(), response.message());
@@ -83,21 +74,22 @@ public class TvShowRepository {
                     }
 
                     @Override
-                    public void onFailure(@NonNull Call<TvShow> call, @NonNull Throwable t) {
+                    public void onFailure(@NonNull Call<Movie> call, @NonNull Throwable t) {
                         callback.onFailure(t.getLocalizedMessage());
                     }
                 });
     }
 
     public void search(String query, int page, final OnSearchCallback callback) {
-        service.searchTV(Consts.API_KEY, query, Consts.getLang(), page)
-                .enqueue(new Callback<TvShowResponse>() {
+        service.searchMovie(Consts.API_KEY, query, Consts.getLang(), page)
+                .enqueue(new Callback<MovieResponse>() {
                     @Override
-                    public void onResponse(@NonNull Call<TvShowResponse> call, @NonNull Response<TvShowResponse> response) {
+                    public void onResponse(@NonNull Call<MovieResponse> call, @NonNull Response<MovieResponse> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 if (response.body().getResults() != null) {
-                                    callback.onSuccess(response.body().getResults(), null, response.message(), response.body().getPage());
+                                    callback.onSuccess(null, response.body().getResults(),
+                                            response.message(), response.body().getPage());
                                 } else {
                                     callback.onFailure("No Results");
                                 }
@@ -110,7 +102,7 @@ public class TvShowRepository {
                     }
 
                     @Override
-                    public void onFailure(@NonNull Call<TvShowResponse> call, @NonNull Throwable t) {
+                    public void onFailure(@NonNull Call<MovieResponse> call, @NonNull Throwable t) {
                         callback.onFailure(t.getLocalizedMessage());
                     }
                 });

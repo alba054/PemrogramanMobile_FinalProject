@@ -23,7 +23,9 @@ import android.widget.TextView;
 import java.util.List;
 
 import com.yoyo.finalproject.R;
+import com.yoyo.finalproject.data.api.repository.MovieRepository;
 import com.yoyo.finalproject.data.api.repository.TvShowRepository;
+import com.yoyo.finalproject.data.api.repository.callback.OnMovieCallback;
 import com.yoyo.finalproject.data.api.repository.callback.OnSearchCallback;
 import com.yoyo.finalproject.data.api.repository.callback.OnTvShowCallback;
 import com.yoyo.finalproject.data.models.Movie;
@@ -40,10 +42,12 @@ public class MainFragment extends Fragment
     private SwipeRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
     private MainAdapter adapter;
-    private TvShowRepository repository;
+    private TvShowRepository tvRepo;
+    private MovieRepository movieRepo;
     private TextView tvError;
     private boolean isFetching;
-    private int currentPage = 1;
+    private int tvCurPage = 1;
+    private int movieCurPage = 1;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,8 +85,9 @@ public class MainFragment extends Fragment
         refreshLayout = view.findViewById(R.id.swl_tv_show);
         recyclerView = view.findViewById(R.id.rv_tv_show);
         tvError = view.findViewById(R.id.tv_error);
-        repository = TvShowRepository.getInstance();
-        getRepositoryData("", currentPage);
+        tvRepo = TvShowRepository.getInstance();
+        movieRepo = MovieRepository.getInstance();
+        getTvRepositoryData("", tvCurPage);
         onScrollListener();
         refreshLayout.setOnRefreshListener(this);
         return view;
@@ -107,21 +112,21 @@ public class MainFragment extends Fragment
     }
 
 
-    private void getRepositoryData(String query, int page) {
+    private void getTvRepositoryData(String query, int page) {
         isFetching = true;
         if (query.equals("")) {
-            repository.getTvShow(getBundle(), page, new OnTvShowCallback() {
-                public void onSuccess(int page, List<TvShow> tvShowList, List<Movie> movieList) {
+            tvRepo.getTvShow(page, new OnTvShowCallback() {
+                public void onSuccess(int page, List<TvShow> tvShowList) {
                     // TODO: hide error text
                     if (adapter == null) {
-                        adapter = new MainAdapter(tvShowList, movieList);
+                        adapter = new MainAdapter(tvShowList, null);
                         adapter.setClickListener(MainFragment.this);
                         adapter.notifyDataSetChanged();
                         recyclerView.setAdapter(adapter);
                     } else {
-                        adapter.appendList(tvShowList, movieList);
+                        adapter.appendList(tvShowList, null);
                     }
-                    currentPage = page;
+                    tvCurPage = page;
                     isFetching = false;
                     refreshLayout.setRefreshing(false);
                 }
@@ -132,7 +137,7 @@ public class MainFragment extends Fragment
                 }
             });
         } else {
-            repository.search(query, page, new OnSearchCallback() {
+            tvRepo.search(query, page, new OnSearchCallback() {
                 @Override
                 public void onSuccess(List<TvShow> tvShowList, List<Movie> movieList, String msg, int page) {
                     // TODO: hide error text
@@ -142,9 +147,59 @@ public class MainFragment extends Fragment
                         adapter.notifyDataSetChanged();
                         recyclerView.setAdapter(adapter);
                     } else {
-                        adapter.appendList(tvShowList, movieList);
+                        adapter.appendList(tvShowList, null);
                     }
-                    currentPage = page;
+                    tvCurPage = page;
+                    isFetching = false;
+                    refreshLayout.setRefreshing(false);
+                }
+
+                @Override
+                public void onFailure(String msg) {
+                    // TODO: show error text
+                }
+            });
+        }
+    }
+
+    private void getMovieRepositoryData(String query, int page) {
+        isFetching = true;
+        if (query.equals("")) {
+            movieRepo.getMovie(page, new OnMovieCallback() {
+                public void onSuccess(int page, List<Movie> movieList) {
+                    // TODO: hide error text
+                    if (adapter == null) {
+                        adapter = new MainAdapter(null, movieList);
+                        adapter.setClickListener(MainFragment.this);
+                        adapter.notifyDataSetChanged();
+                        recyclerView.setAdapter(adapter);
+                    } else {
+                        adapter.appendList(null, movieList);
+                    }
+                    movieCurPage = page;
+                    isFetching = false;
+                    refreshLayout.setRefreshing(false);
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    // TODO: show error text
+                }
+            });
+        } else {
+            movieRepo.search(query, page, new OnSearchCallback() {
+                @Override
+                public void onSuccess(List<TvShow> tvShowList, List<Movie> movieList, String msg, int page) {
+                    // TODO: hide error text
+                    if (adapter == null) {
+                        adapter = new MainAdapter(tvShowList, movieList);
+                        adapter.setClickListener(MainFragment.this);
+                        adapter.notifyDataSetChanged();
+                        recyclerView.setAdapter(adapter);
+                    } else {
+                        adapter.appendList(tvShowList, null);
+                    }
+                    movieCurPage = page;
                     isFetching = false;
                     refreshLayout.setRefreshing(false);
                 }
@@ -161,7 +216,7 @@ public class MainFragment extends Fragment
         if (getArguments() != null) {
             return getArguments().getString("SORT_BY");
         }
-        return "airing_today";
+        return "tv_show";
     }
 
     @Override
@@ -183,7 +238,12 @@ public class MainFragment extends Fragment
     @Override
     public void onRefresh() {
         adapter = null;
-        getRepositoryData("", currentPage);
+        if (getBundle().equals("tv_show")) {
+            getTvRepositoryData("", tvCurPage);
+        } else {
+            getMovieRepositoryData("", movieCurPage);
+        }
+
     }
 
     @Override
@@ -195,10 +255,18 @@ public class MainFragment extends Fragment
     public boolean onQueryTextChange(String s) {
         if (s.length() > 0) {
             adapter = null;
-            getRepositoryData(s, currentPage);
+            if (getBundle().equals("tv_show")) {
+                getTvRepositoryData(s, tvCurPage);
+            } else {
+                getMovieRepositoryData(s, movieCurPage);
+            }
         } else {
             adapter = null;
-            getRepositoryData("", currentPage);
+            if (getBundle().equals("tv_show")) {
+                getTvRepositoryData("", tvCurPage);
+            } else {
+                getMovieRepositoryData("", movieCurPage);
+            }
         }
         return true;
     }
