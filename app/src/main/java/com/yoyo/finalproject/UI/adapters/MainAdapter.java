@@ -90,7 +90,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
         void onBindItemView(Movie movie) {
             this.movie = movie;
-            String imageUri = movie.getPosterImage(ImageSize.W154);
+            String imageUri = movie.getPosterPath(ImageSize.W154);
             String title = movie.getTitle();
             Glide.with(itemView.getContext())
                     .load(imageUri)

@@ -1,6 +1,7 @@
 package com.yoyo.finalproject.data.models;
 
 import com.google.gson.annotations.SerializedName;
+import com.yoyo.finalproject.Consts;
 import com.yoyo.finalproject.ImageSize;
 import com.yoyo.finalproject.data.models.Genre;
 
@@ -18,7 +19,7 @@ public class Movie {
     private String releaseDate;
 
     @SerializedName("poster_path")
-    private String posterImage;
+    private String posterPath;
 
     private int id;
 
@@ -31,33 +32,16 @@ public class Movie {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
     public String getBackdropImage() {
         return backdropImage;
     }
 
-    public void setBackdropImage(String backdropImage) {
-        this.backdropImage = backdropImage;
+
+    public String getPosterPath(ImageSize size) {
+        return Consts.IMG_URL + size.getValue() + posterPath;
     }
 
-    public String getReleaseDate() {
-        return releaseDate;
-    }
-
-    public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
-    }
-
-    public String getPosterImage(ImageSize w154) {
-        return posterImage;
-    }
-
-    public void setPosterImage(String posterImage) {
-        this.posterImage = posterImage;
-    }
 
     public int getId() {
         return id;
@@ -71,16 +55,10 @@ public class Movie {
         return genres;
     }
 
-    public void setGenres(List<Genre> genres) {
-        this.genres = genres;
-    }
 
     public String getOverview() {
         return overview;
     }
 
-    public void setOverview(String overview) {
-        this.overview = overview;
-    }
 }
 

@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.yoyo.finalproject.Consts;
 import com.yoyo.finalproject.data.api.Service;
-import com.yoyo.finalproject.data.api.repository.callback.OnMovieCallback;
+import com.yoyo.finalproject.data.api.repository.callback.OnCallback;
 import com.yoyo.finalproject.data.api.repository.callback.OnMovieDetailCallback;
 import com.yoyo.finalproject.data.api.repository.callback.OnSearchCallback;
 import com.yoyo.finalproject.data.models.Movie;
@@ -20,16 +20,26 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MovieRepository {
-    private static MovieRepository repository;
-    private Service service;
 
     private MovieRepository(Service service) {
         this.service = service;
     }
 
+    private static MovieRepository repository;
+    private Service service;
 
+    public static MovieRepository getInstance() {
+        if (repository == null) {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(Consts.BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            repository = new MovieRepository(retrofit.create(Service.class));
+        }
+        return repository;
+    }
 
-    public void getMovie(int page, final OnMovieCallback callback) {
+    public void getMovie(int page, final OnCallback<Movie> callback) {
         service.getMovieResults(Consts.API_KEY, Consts.getLang(), page)
                 .enqueue(new Callback<MovieResponse>() {
                     @Override
@@ -37,7 +47,7 @@ public class MovieRepository {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 if (response.body().getResults() != null) {
-
+                                    Log.d("MOVIE REPO", response.body().getResults().get(0).getTitle());
                                     callback.onSuccess(response.body().getPage(), response.body().getResults());
                                 } else {
                                     callback.onFailure("response.body().getResults() is null");
@@ -80,7 +90,7 @@ public class MovieRepository {
                 });
     }
 
-    public void search(String query, int page, final OnSearchCallback callback) {
+    public void search(String query, int page, final OnSearchCallback<Movie> callback) {
         service.searchMovie(Consts.API_KEY, query, Consts.getLang(), page)
                 .enqueue(new Callback<MovieResponse>() {
                     @Override
@@ -88,7 +98,7 @@ public class MovieRepository {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 if (response.body().getResults() != null) {
-                                    callback.onSuccess(null, response.body().getResults(),
+                                    callback.onSuccess(response.body().getResults(),
                                             response.message(), response.body().getPage());
                                 } else {
                                     callback.onFailure("No Results");

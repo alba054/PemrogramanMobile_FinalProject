@@ -11,11 +11,6 @@
         android:title="@string/popular" />
 
     <item
-        android:id="@+id/item_top_rated"
-        android:icon="@drawable/ic_top_rated_white"
-        android:title="@string/top_rated" />
-
-    <item
         android:id="@+id/item_favorite"
         android:icon="@drawable/ic_favorite_white"
         android:title="@string/favorite" />

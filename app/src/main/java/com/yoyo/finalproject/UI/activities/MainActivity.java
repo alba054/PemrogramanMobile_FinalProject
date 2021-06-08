@@ -36,9 +36,6 @@ public class MainActivity extends AppCompatActivity
                 case "popular":
                     bottomNavigationView.setSelectedItemId(R.id.item_popular);
                     break;
-                case "top_rated":
-                    bottomNavigationView.setSelectedItemId(R.id.item_top_rated);
-                    break;
                 case "favorite":
                     bottomNavigationView.setSelectedItemId(R.id.item_favorite);
                     break;

@@ -7,9 +7,9 @@ import androidx.annotation.NonNull;
 
 import com.yoyo.finalproject.Consts;
 import com.yoyo.finalproject.data.api.Service;
+import com.yoyo.finalproject.data.api.repository.callback.OnCallback;
 import com.yoyo.finalproject.data.api.repository.callback.OnSearchCallback;
 import com.yoyo.finalproject.data.api.repository.callback.OnTvDetailCallback;
-import com.yoyo.finalproject.data.api.repository.callback.OnTvShowCallback;
 import com.yoyo.finalproject.data.models.TvShow;
 import com.yoyo.finalproject.data.models.TvShowResponse;
 
@@ -38,7 +38,7 @@ public class TvShowRepository {
         return repository;
     }
 
-    public void getTvShow(int page, final OnTvShowCallback callback) {
+    public void getTvShow(int page, final OnCallback<TvShow> callback) {
         service.getTvResults(Consts.API_KEY, Consts.getLang(), page)
                 .enqueue(new Callback<TvShowResponse>() {
                     @Override
@@ -89,7 +89,7 @@ public class TvShowRepository {
                 });
     }
 
-    public void search(String query, int page, final OnSearchCallback callback) {
+    public void search(String query, int page, final OnSearchCallback<TvShow> callback) {
         service.searchTV(Consts.API_KEY, query, Consts.getLang(), page)
                 .enqueue(new Callback<TvShowResponse>() {
                     @Override
@@ -97,7 +97,7 @@ public class TvShowRepository {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 if (response.body().getResults() != null) {
-                                    callback.onSuccess(response.body().getResults(), null, response.message(), response.body().getPage());
+                                    callback.onSuccess(response.body().getResults(), response.message(), response.body().getPage());
                                 } else {
                                     callback.onFailure("No Results");
                                 }

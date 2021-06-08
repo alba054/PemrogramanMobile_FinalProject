@@ -25,9 +25,8 @@ import java.util.List;
 import com.yoyo.finalproject.R;
 import com.yoyo.finalproject.data.api.repository.MovieRepository;
 import com.yoyo.finalproject.data.api.repository.TvShowRepository;
-import com.yoyo.finalproject.data.api.repository.callback.OnMovieCallback;
+import com.yoyo.finalproject.data.api.repository.callback.OnCallback;
 import com.yoyo.finalproject.data.api.repository.callback.OnSearchCallback;
-import com.yoyo.finalproject.data.api.repository.callback.OnTvShowCallback;
 import com.yoyo.finalproject.data.models.Movie;
 import com.yoyo.finalproject.data.models.TvShow;
 import com.yoyo.finalproject.UI.activities.DetailActivity;
@@ -87,14 +86,19 @@ public class MainFragment extends Fragment
         tvError = view.findViewById(R.id.tv_error);
         tvRepo = TvShowRepository.getInstance();
         movieRepo = MovieRepository.getInstance();
-        getTvRepositoryData("", tvCurPage);
+        if (getBundle().equals("tv_show")) {
+            getTvRepositoryData("", tvCurPage);
+        } else {
+            getMovieRepositoryData("", movieCurPage);
+        }
+
         onScrollListener();
         refreshLayout.setOnRefreshListener(this);
         return view;
     }
 
     private void onScrollListener() {
-        final GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
+        final GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -115,7 +119,7 @@ public class MainFragment extends Fragment
     private void getTvRepositoryData(String query, int page) {
         isFetching = true;
         if (query.equals("")) {
-            tvRepo.getTvShow(page, new OnTvShowCallback() {
+            tvRepo.getTvShow(page, new OnCallback<TvShow>() {
                 public void onSuccess(int page, List<TvShow> tvShowList) {
                     // TODO: hide error text
                     if (adapter == null) {
@@ -137,12 +141,12 @@ public class MainFragment extends Fragment
                 }
             });
         } else {
-            tvRepo.search(query, page, new OnSearchCallback() {
+            tvRepo.search(query, page, new OnSearchCallback<TvShow>() {
                 @Override
-                public void onSuccess(List<TvShow> tvShowList, List<Movie> movieList, String msg, int page) {
+                public void onSuccess(List<TvShow> tvShowList, String msg, int page) {
                     // TODO: hide error text
                     if (adapter == null) {
-                        adapter = new MainAdapter(tvShowList, movieList);
+                        adapter = new MainAdapter(tvShowList, null);
                         adapter.setClickListener(MainFragment.this);
                         adapter.notifyDataSetChanged();
                         recyclerView.setAdapter(adapter);
@@ -165,7 +169,7 @@ public class MainFragment extends Fragment
     private void getMovieRepositoryData(String query, int page) {
         isFetching = true;
         if (query.equals("")) {
-            movieRepo.getMovie(page, new OnMovieCallback() {
+            movieRepo.getMovie(page, new OnCallback<Movie>() {
                 public void onSuccess(int page, List<Movie> movieList) {
                     // TODO: hide error text
                     if (adapter == null) {
@@ -187,17 +191,17 @@ public class MainFragment extends Fragment
                 }
             });
         } else {
-            movieRepo.search(query, page, new OnSearchCallback() {
+            movieRepo.search(query, page, new OnSearchCallback<Movie>() {
                 @Override
-                public void onSuccess(List<TvShow> tvShowList, List<Movie> movieList, String msg, int page) {
+                public void onSuccess(List<Movie> movieList, String msg, int page) {
                     // TODO: hide error text
                     if (adapter == null) {
-                        adapter = new MainAdapter(tvShowList, movieList);
+                        adapter = new MainAdapter(null, movieList);
                         adapter.setClickListener(MainFragment.this);
                         adapter.notifyDataSetChanged();
                         recyclerView.setAdapter(adapter);
                     } else {
-                        adapter.appendList(tvShowList, null);
+                        adapter.appendList(null, movieList);
                     }
                     movieCurPage = page;
                     isFetching = false;
