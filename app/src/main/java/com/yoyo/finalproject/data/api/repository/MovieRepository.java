@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import com.yoyo.finalproject.Consts;
 import com.yoyo.finalproject.data.api.Service;
 import com.yoyo.finalproject.data.api.repository.callback.OnCallback;
-import com.yoyo.finalproject.data.api.repository.callback.OnMovieDetailCallback;
+import com.yoyo.finalproject.data.api.repository.callback.OnDetailCallback;
 import com.yoyo.finalproject.data.api.repository.callback.OnSearchCallback;
 import com.yoyo.finalproject.data.models.Movie;
 import com.yoyo.finalproject.data.models.MovieResponse;
@@ -67,7 +67,7 @@ public class MovieRepository {
                 });
     }
 
-    public void getTvDetail(int id, final OnMovieDetailCallback callback) {
+    public void getMovieDetail(int id, final OnDetailCallback<Movie> callback) {
         service.getMovieDetail(id, Consts.API_KEY, Consts.getLang())
                 .enqueue(new Callback<Movie>() {
                     @Override

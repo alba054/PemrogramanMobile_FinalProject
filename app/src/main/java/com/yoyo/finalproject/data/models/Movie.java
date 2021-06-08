@@ -13,13 +13,27 @@ public class Movie {
     private String title;
 
     @SerializedName("backdrop_path")
-    private String backdropImage;
+    private String backdropPath;
 
     @SerializedName("release_date")
     private String releaseDate;
 
     @SerializedName("poster_path")
     private String posterPath;
+
+    @SerializedName("popularity")
+    private float popularity;
+
+    @SerializedName("vote_average")
+    private float voteAverage;
+
+    public float getVoteAverage() {
+        return voteAverage;
+    }
+
+    public float getPopularity() {
+        return popularity;
+    }
 
     private int id;
 
@@ -33,8 +47,8 @@ public class Movie {
     }
 
 
-    public String getBackdropImage() {
-        return backdropImage;
+    public String getBackdropPath(ImageSize size) {
+        return Consts.IMG_URL + size.getValue() + backdropPath;
     }
 
 

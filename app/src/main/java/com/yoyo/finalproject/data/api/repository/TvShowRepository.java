@@ -8,8 +8,8 @@ import androidx.annotation.NonNull;
 import com.yoyo.finalproject.Consts;
 import com.yoyo.finalproject.data.api.Service;
 import com.yoyo.finalproject.data.api.repository.callback.OnCallback;
+import com.yoyo.finalproject.data.api.repository.callback.OnDetailCallback;
 import com.yoyo.finalproject.data.api.repository.callback.OnSearchCallback;
-import com.yoyo.finalproject.data.api.repository.callback.OnTvDetailCallback;
 import com.yoyo.finalproject.data.models.TvShow;
 import com.yoyo.finalproject.data.models.TvShowResponse;
 
@@ -66,7 +66,7 @@ public class TvShowRepository {
                 });
     }
 
-    public void getTvDetail(int id, final OnTvDetailCallback callback) {
+    public void getTvDetail(int id, final OnDetailCallback<TvShow> callback) {
         service.getTvDetail(id, Consts.API_KEY, Consts.getLang())
                 .enqueue(new Callback<TvShow>() {
                     @Override

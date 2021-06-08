@@ -30,10 +30,10 @@ public class MainActivity extends AppCompatActivity
     private void setSelectedItem(BottomNavigationView bottomNavigationView) {
         if (getIntent().getStringExtra("SELECTED_FRAGMENT") != null) {
             switch (getIntent().getStringExtra("SELECTED_FRAGMENT")) {
-                case "airing_today":
+                case "tv_show":
                     bottomNavigationView.setSelectedItemId(R.id.item_airing_today);
                     break;
-                case "popular":
+                case "movie":
                     bottomNavigationView.setSelectedItemId(R.id.item_popular);
                     break;
                 case "favorite":
