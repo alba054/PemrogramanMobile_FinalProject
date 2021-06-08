@@ -154,11 +154,21 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/tv_genre"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_below="@id/iv_poster"
+            android:layout_marginBottom="0dp"
+            android:text="Action, Romance, Comedy, Fantasy" />
+
+        <TextView
             android:id="@+id/label_overview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/iv_poster"
             android:layout_marginLeft="16dp"
+            android:layout_marginTop="48dp"
             android:text="@string/overview"
             android:textSize="18sp"
             android:textStyle="bold" />

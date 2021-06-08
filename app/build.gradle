@@ -1,5 +1,7 @@
 plugins {
     id 'com.android.application'
+    id 'realm-android'
+
 }
 
 android {
@@ -27,6 +29,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
+
 
 dependencies {
 

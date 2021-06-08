@@ -3,8 +3,12 @@ package com.yoyo.finalproject.UI.activities;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -13,16 +17,15 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.yoyo.finalproject.ImageSize;
 import com.yoyo.finalproject.R;
-import com.yoyo.finalproject.UI.adapters.MainAdapter;
-import com.yoyo.finalproject.UI.fragments.MainFragment;
 import com.yoyo.finalproject.data.api.repository.MovieRepository;
 import com.yoyo.finalproject.data.api.repository.TvShowRepository;
-import com.yoyo.finalproject.data.api.repository.callback.OnCallback;
 import com.yoyo.finalproject.data.api.repository.callback.OnDetailCallback;
 import com.yoyo.finalproject.data.models.Movie;
 import com.yoyo.finalproject.data.models.TvShow;
 
 import java.util.List;
+
+import io.realm.Realm;
 
 public class DetailActivity extends AppCompatActivity {
     private ImageView ivBackdrop;
@@ -47,6 +50,7 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        Realm.init(this);
 
         ivBackdrop = findViewById(R.id.iv_backdrop);
         ivPoster = findViewById(R.id.iv_poster);
@@ -66,6 +70,41 @@ public class DetailActivity extends AppCompatActivity {
         movieRepo = MovieRepository.getInstance();
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.action_bar_detail_activity, menu);
+        // TODO: switch favourite button state
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent mainActivity = new Intent(DetailActivity.this, MainActivity.class);
+                mainActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                mainActivity.putExtra("SELECTED_FRAGMENT", getIntent().getStringExtra("SELECTED_FRAGMENT"));
+                startActivity(mainActivity);
+                return true;
+            case R.id.item_favorite:
+//                if (helper.isFavorite(id)) {
+//                    if (helper.delete(id) > 0) {
+//                        // TODO: Set favorite button state
+//                    }
+//                } else {
+//                    if (helper.insert(tvShow) > 0) {
+//                        // TODO: Set favorite button state
+//                    }
+//                }
+                return true;
+            case R.id.item_language_setting:
+                startActivity(new Intent(Settings.ACTION_LOCALE_SETTINGS));
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -76,6 +115,8 @@ public class DetailActivity extends AppCompatActivity {
 
         load(id, selectedFragment);
     }
+
+
 
     private void load(Integer id, String selectedFragment) {
         if (selectedFragment.equals("tv_show")) {
@@ -147,4 +188,6 @@ public class DetailActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
+
+
 }

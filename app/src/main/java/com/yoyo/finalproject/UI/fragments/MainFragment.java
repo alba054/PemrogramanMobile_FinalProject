@@ -108,7 +108,17 @@ public class MainFragment extends Fragment
                 int firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
                 if (firstVisibleItem + visibleItem >= totalItem / 2) {
                     if (!isFetching) {
+                        isFetching = true;
                         // TODO: call repository with incremented page
+                        if (getBundle().equals("tv_show")) {
+                            tvCurPage++;
+                            getTvRepositoryData("", tvCurPage);
+                        } else {
+                            movieCurPage++;
+                            getMovieRepositoryData("", movieCurPage);
+                        }
+                        isFetching = false;
+
                     }
                 }
             }
@@ -242,6 +252,7 @@ public class MainFragment extends Fragment
     @Override
     public void onRefresh() {
         adapter = null;
+        tvCurPage = 1;
         if (getBundle().equals("tv_show")) {
             getTvRepositoryData("", tvCurPage);
         } else {
