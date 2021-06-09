@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -88,6 +89,7 @@ public class MainFragment extends Fragment
         movieRepo = MovieRepository.getInstance();
         if (getBundle().equals("tv_show")) {
             getTvRepositoryData("", tvCurPage);
+
         } else {
             getMovieRepositoryData("", movieCurPage);
         }
@@ -129,10 +131,12 @@ public class MainFragment extends Fragment
     private void getTvRepositoryData(String query, int page) {
         isFetching = true;
         if (query.equals("")) {
+
             tvRepo.getTvShow(page, new OnCallback<TvShow>() {
                 public void onSuccess(int page, List<TvShow> tvShowList) {
                     // TODO: hide error text
                     if (adapter == null) {
+                        Log.d("Debugging", "adapter:null");
                         adapter = new MainAdapter(tvShowList, null);
                         adapter.setClickListener(MainFragment.this);
                         adapter.notifyDataSetChanged();
@@ -148,6 +152,7 @@ public class MainFragment extends Fragment
                 @Override
                 public void onFailure(String message) {
                     // TODO: show error text
+                    Log.d("Error Fetching", message);
                 }
             });
         } else {

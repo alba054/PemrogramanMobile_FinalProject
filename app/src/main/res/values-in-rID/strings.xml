@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Jelajah TV v0.2</string>
-    <string name="airing_today">Hari ini</string>
-    <string name="popular">Populer</string>
-    <string name="top_rated">rating Tertinggi</string>
+    <string name="airing_today">TV</string>
+    <string name="popular">Film</string>
     <string name="favorite">Favorit</string>
     <string name="first_air_date">Perdana</string>
     <string name="last_air_date">Terakhir</string>
