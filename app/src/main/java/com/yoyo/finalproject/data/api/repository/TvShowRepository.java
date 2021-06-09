@@ -8,12 +8,17 @@ import androidx.annotation.NonNull;
 import com.yoyo.finalproject.Consts;
 import com.yoyo.finalproject.data.api.Service;
 import com.yoyo.finalproject.data.api.repository.callback.OnCallback;
+import com.yoyo.finalproject.data.api.repository.callback.OnCastCallback;
 import com.yoyo.finalproject.data.api.repository.callback.OnDetailCallback;
 import com.yoyo.finalproject.data.api.repository.callback.OnSearchCallback;
 import com.yoyo.finalproject.data.api.repository.utils.Repository;
 import com.yoyo.finalproject.data.api.repository.utils.SingleRequest;
+import com.yoyo.finalproject.data.models.Cast;
+import com.yoyo.finalproject.data.models.CastResponse;
 import com.yoyo.finalproject.data.models.TvShow;
 import com.yoyo.finalproject.data.models.TvShowResponse;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -107,6 +112,33 @@ public class TvShowRepository extends Repository<TvShow> {
 
                     @Override
                     public void onFailure(@NonNull Call<TvShowResponse> call, @NonNull Throwable t) {
+                        callback.onFailure(t.getLocalizedMessage());
+                    }
+                });
+    }
+
+    public void getCasts(int tvId, final OnCastCallback callback) {
+        service.getCasts(tvId, Consts.API_KEY, Consts.getLang())
+                .enqueue(new Callback<CastResponse>() {
+                    @Override
+                    public void onResponse(Call<CastResponse> call, Response<CastResponse> response) {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                if (response.body() != null) {
+                                    callback.onSuccess(response.body().getCastList(), response.message());
+                                } else {
+                                    callback.onFailure("No Casts");
+                                }
+                            } else {
+                                callback.onFailure("response.body() is null");
+                            }
+                        } else {
+                            callback.onFailure(response.message() + " : " + response.code());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<CastResponse> call, Throwable t) {
                         callback.onFailure(t.getLocalizedMessage());
                     }
                 });

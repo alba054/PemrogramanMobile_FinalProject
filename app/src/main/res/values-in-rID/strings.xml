@@ -13,4 +13,5 @@
     <string name="favorite_empty">Daftar favorit masih kosong</string>
     <string name="search">Cari</string>
     <string name="language">Bahasa</string>
+    <string name="cast">Pemain</string>
 </resources>

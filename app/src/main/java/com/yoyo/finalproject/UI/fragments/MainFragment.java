@@ -96,6 +96,7 @@ public class MainFragment extends Fragment
 
         onScrollListener();
         refreshLayout.setOnRefreshListener(this);
+
         return view;
     }
 
