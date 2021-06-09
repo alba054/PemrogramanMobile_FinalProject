@@ -253,6 +253,7 @@ public class MainFragment extends Fragment
     public void onRefresh() {
         adapter = null;
         tvCurPage = 1;
+        movieCurPage = 1;
         if (getBundle().equals("tv_show")) {
             getTvRepositoryData("", tvCurPage);
         } else {
