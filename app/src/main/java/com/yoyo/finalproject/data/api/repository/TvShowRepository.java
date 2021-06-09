@@ -10,18 +10,17 @@ import com.yoyo.finalproject.data.api.Service;
 import com.yoyo.finalproject.data.api.repository.callback.OnCallback;
 import com.yoyo.finalproject.data.api.repository.callback.OnDetailCallback;
 import com.yoyo.finalproject.data.api.repository.callback.OnSearchCallback;
+import com.yoyo.finalproject.data.api.repository.utils.Repository;
+import com.yoyo.finalproject.data.api.repository.utils.SingleRequest;
 import com.yoyo.finalproject.data.models.TvShow;
 import com.yoyo.finalproject.data.models.TvShowResponse;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
-public class TvShowRepository {
+public class TvShowRepository extends Repository<TvShow> {
     private static TvShowRepository repository;
-    private Service service;
 
     private TvShowRepository(Service service) {
         this.service = service;
@@ -29,16 +28,13 @@ public class TvShowRepository {
 
     public static TvShowRepository getInstance() {
         if (repository == null) {
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(Consts.BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            repository = new TvShowRepository(retrofit.create(Service.class));
+            Service retrofit = SingleRequest.getInstance();
+            repository = new TvShowRepository(retrofit);
         }
         return repository;
     }
 
-    public void getTvShow(int page, final OnCallback<TvShow> callback) {
+    public void getModel(int page, final OnCallback<TvShow> callback) {
         service.getTvResults(Consts.API_KEY, Consts.getLang(), page)
                 .enqueue(new Callback<TvShowResponse>() {
                     @Override
@@ -66,7 +62,7 @@ public class TvShowRepository {
                 });
     }
 
-    public void getTvDetail(int id, final OnDetailCallback<TvShow> callback) {
+    public void getModelDetail(int id, final OnDetailCallback<TvShow> callback) {
         service.getTvDetail(id, Consts.API_KEY, Consts.getLang())
                 .enqueue(new Callback<TvShow>() {
                     @Override

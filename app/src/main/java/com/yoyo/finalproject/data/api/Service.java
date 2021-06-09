@@ -12,7 +12,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface Service {
-    @GET("tv/airing_today")
+    @GET("tv/popular")
     Call<TvShowResponse> getTvResults(
             @Query("api_key") String apiKey,
             @Query("language") String language,
@@ -34,7 +34,7 @@ public interface Service {
             @Query("page") int page
     );
 
-    @GET("movie/now_playing")
+    @GET("movie/popular")
     Call<MovieResponse> getMovieResults(
             @Query("api_key") String apiKey,
             @Query("language") String language,

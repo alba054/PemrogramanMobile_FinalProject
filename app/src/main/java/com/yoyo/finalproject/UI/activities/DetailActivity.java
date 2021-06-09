@@ -120,7 +120,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private void load(Integer id, String selectedFragment) {
         if (selectedFragment.equals("tv_show")) {
-            tvRepo.getTvDetail(id, new OnDetailCallback<TvShow>() {
+            tvRepo.getModelDetail(id, new OnDetailCallback<TvShow>() {
                 @Override
                 public void onSuccess(TvShow media, String message) {
                     String imageUri = media.getPosterPath(ImageSize.W154);
@@ -149,7 +149,7 @@ public class DetailActivity extends AppCompatActivity {
                 }
             });
         } else {
-            movieRepo.getMovieDetail(id, new OnDetailCallback<Movie>() {
+            movieRepo.getModelDetail(id, new OnDetailCallback<Movie>() {
                 @Override
                 public void onSuccess(Movie media, String message) {
                     Log.d("MOVIE TITLE", media.getTitle());

@@ -111,6 +111,8 @@ public class MainFragment extends Fragment
                 if (firstVisibleItem + visibleItem >= totalItem / 2) {
                     if (!isFetching) {
                         isFetching = true;
+                        Log.d("TV SHOW PAGE", Integer.toString(tvCurPage));
+                        Log.d("MOVIE PAGE", Integer.toString(movieCurPage));
                         // TODO: call repository with incremented page
                         if (getBundle().equals("tv_show")) {
                             tvCurPage++;
@@ -132,7 +134,7 @@ public class MainFragment extends Fragment
         isFetching = true;
         if (query.equals("")) {
 
-            tvRepo.getTvShow(page, new OnCallback<TvShow>() {
+            tvRepo.getModel(page, new OnCallback<TvShow>() {
                 public void onSuccess(int page, List<TvShow> tvShowList) {
                     // TODO: hide error text
                     if (adapter == null) {
@@ -176,6 +178,7 @@ public class MainFragment extends Fragment
                 @Override
                 public void onFailure(String msg) {
                     // TODO: show error text
+                    Log.d("Error Fetching", msg);
                 }
             });
         }
@@ -184,7 +187,7 @@ public class MainFragment extends Fragment
     private void getMovieRepositoryData(String query, int page) {
         isFetching = true;
         if (query.equals("")) {
-            movieRepo.getMovie(page, new OnCallback<Movie>() {
+            movieRepo.getModel(page, new OnCallback<Movie>() {
                 public void onSuccess(int page, List<Movie> movieList) {
                     // TODO: hide error text
                     if (adapter == null) {
@@ -203,6 +206,7 @@ public class MainFragment extends Fragment
                 @Override
                 public void onFailure(String message) {
                     // TODO: show error text
+                    Log.d("Error Fetching", message);
                 }
             });
         } else {
@@ -226,6 +230,7 @@ public class MainFragment extends Fragment
                 @Override
                 public void onFailure(String msg) {
                     // TODO: show error text
+                    Log.d("Error Fetching", msg);
                 }
             });
         }
