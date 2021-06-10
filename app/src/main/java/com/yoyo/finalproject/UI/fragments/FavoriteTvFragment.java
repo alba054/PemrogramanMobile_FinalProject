@@ -62,6 +62,7 @@ public class FavoriteTvFragment extends Fragment implements OnItemClickListener 
         List<FavoriteTv> favoriteTvs = (List) backgroundThreadRealm.where(FavoriteTv.class).findAll();
 
         if (favoriteTvs.size() == 0) {
+            recyclerView.setVisibility(View.GONE);
             tvError.setVisibility(View.VISIBLE);
             tvError.setText(R.string.no_favorite);
         } else {
@@ -72,6 +73,7 @@ public class FavoriteTvFragment extends Fragment implements OnItemClickListener 
             adapter.notifyDataSetChanged();
             recyclerView.setAdapter(adapter);
             recyclerView.setLayoutManager(linearLayoutManager);
+            recyclerView.setVisibility(View.VISIBLE);
             tvError.setVisibility(View.GONE);
         }
 
@@ -85,6 +87,7 @@ public class FavoriteTvFragment extends Fragment implements OnItemClickListener 
 
         List<FavoriteTv> favoriteTvs = (List) backgroundThreadRealm.where(FavoriteTv.class).findAll();
         if (favoriteTvs.size() == 0) {
+            recyclerView.setVisibility(View.GONE);
             tvError.setVisibility(View.VISIBLE);
             tvError.setText(R.string.no_favorite);
         } else {
@@ -93,6 +96,7 @@ public class FavoriteTvFragment extends Fragment implements OnItemClickListener 
             adapter.notifyDataSetChanged();
             recyclerView.setAdapter(adapter);
             tvError.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
         }
 
     }

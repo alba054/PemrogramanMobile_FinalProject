@@ -36,7 +36,6 @@ public class FavoriteMovieFragment extends Fragment implements OnItemClickListen
     private FavoriteMovieAdapter adapter;
     private TextView tvError;
 
-
     public FavoriteMovieFragment() {
     }
 
@@ -61,6 +60,7 @@ public class FavoriteMovieFragment extends Fragment implements OnItemClickListen
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
         List<FavoriteMovie> favoriteMovies = (List) backgroundThreadRealm.where(FavoriteMovie.class).findAll();
         if (favoriteMovies.size() == 0) {
+            recyclerView.setVisibility(View.GONE);
             tvError.setVisibility(View.VISIBLE);
             tvError.setText(R.string.no_favorite);
         } else {
@@ -71,7 +71,9 @@ public class FavoriteMovieFragment extends Fragment implements OnItemClickListen
             adapter.notifyDataSetChanged();
             recyclerView.setAdapter(adapter);
             recyclerView.setLayoutManager(linearLayoutManager);
+            recyclerView.setVisibility(View.VISIBLE);
             tvError.setVisibility(View.GONE);
+
         }
 
         return view;
@@ -83,6 +85,7 @@ public class FavoriteMovieFragment extends Fragment implements OnItemClickListen
 
         List<FavoriteMovie> favoriteMovies = (List) backgroundThreadRealm.where(FavoriteMovie.class).findAll();
         if (favoriteMovies.size() == 0) {
+            recyclerView.setVisibility(View.GONE);
             tvError.setVisibility(View.VISIBLE);
             tvError.setText(R.string.no_favorite);
         } else {
@@ -90,6 +93,7 @@ public class FavoriteMovieFragment extends Fragment implements OnItemClickListen
             adapter.setClickListener(FavoriteMovieFragment.this);
             adapter.notifyDataSetChanged();
             recyclerView.setAdapter(adapter);
+            recyclerView.setVisibility(View.VISIBLE);
             tvError.setVisibility(View.GONE);
         }
 
