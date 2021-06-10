@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.yoyo.finalproject.ImageSize;
 import com.yoyo.finalproject.R;
@@ -33,6 +34,7 @@ public class FavoriteTvFragment extends Fragment implements OnItemClickListener 
     private RecyclerView recyclerView;
     private Realm backgroundThreadRealm;
     private FavoriteTvAdapter adapter;
+    private TextView tvError;
 
 
     public FavoriteTvFragment() {
@@ -53,21 +55,47 @@ public class FavoriteTvFragment extends Fragment implements OnItemClickListener 
 
         View view = inflater.inflate(R.layout.fragment_favorite_tv, container, false);
         recyclerView = view.findViewById(R.id.rv_favorite);
+        tvError = view.findViewById(R.id.tv_error);
 
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
         List<FavoriteTv> favoriteTvs = (List) backgroundThreadRealm.where(FavoriteTv.class).findAll();
 
-        Log.d("Favorite Movies", favoriteTvs.get(0).getTitle());
-        adapter = new FavoriteTvAdapter(favoriteTvs);
-        Log.d("Adapter", adapter.toString());
-        adapter.setClickListener(FavoriteTvFragment.this);
-        adapter.notifyDataSetChanged();
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(linearLayoutManager);
+        if (favoriteTvs.size() == 0) {
+            tvError.setVisibility(View.VISIBLE);
+            tvError.setText(R.string.no_favorite);
+        } else {
+//            Log.d("Favorite Movies", favoriteTvs.get(0).getTitle());
+            adapter = new FavoriteTvAdapter(favoriteTvs);
+//            Log.d("Adapter", adapter.toString());
+            adapter.setClickListener(FavoriteTvFragment.this);
+            adapter.notifyDataSetChanged();
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(linearLayoutManager);
+            tvError.setVisibility(View.GONE);
+        }
+
+
         return view;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        List<FavoriteTv> favoriteTvs = (List) backgroundThreadRealm.where(FavoriteTv.class).findAll();
+        if (favoriteTvs.size() == 0) {
+            tvError.setVisibility(View.VISIBLE);
+            tvError.setText(R.string.no_favorite);
+        } else {
+            adapter = new FavoriteTvAdapter(favoriteTvs);
+            adapter.setClickListener(FavoriteTvFragment.this);
+            adapter.notifyDataSetChanged();
+            recyclerView.setAdapter(adapter);
+            tvError.setVisibility(View.GONE);
+        }
+
+    }
 
     @Override
     public void onClick(TvShow tvShow) {
@@ -76,12 +104,7 @@ public class FavoriteTvFragment extends Fragment implements OnItemClickListener 
 
     @Override
     public void onClick(Movie movie) {
-        Intent detailActivity = new Intent(getContext(), DetailActivity.class);
-        detailActivity.putExtra("ID", movie.getId());
-        detailActivity.putExtra("TITLE", movie.getTitle());
-        detailActivity.putExtra("POSTER_PATH", movie.getPosterPath(ImageSize.W154));
-        detailActivity.putExtra("SELECTED_FRAGMENT", "movie");
-        startActivity(detailActivity);
+
     }
 
     @Override
@@ -91,8 +114,15 @@ public class FavoriteTvFragment extends Fragment implements OnItemClickListener 
 
     @Override
     public void onClick(FavoriteTv tv) {
-
+        Intent detailActivity = new Intent(getContext(), DetailActivity.class);
+        detailActivity.putExtra("ID", tv.getId());
+        detailActivity.putExtra("TITLE", tv.getTitle());
+        detailActivity.putExtra("POSTER_PATH", tv.getPosterPath(ImageSize.W154));
+        detailActivity.putExtra("SELECTED_FRAGMENT", "tv_show");
+        startActivity(detailActivity);
     }
+
+
 
 
 }

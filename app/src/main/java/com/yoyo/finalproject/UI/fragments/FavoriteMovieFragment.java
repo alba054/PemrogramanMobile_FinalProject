@@ -11,11 +11,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.yoyo.finalproject.ImageSize;
 import com.yoyo.finalproject.R;
 import com.yoyo.finalproject.UI.activities.DetailActivity;
 import com.yoyo.finalproject.UI.adapters.FavoriteMovieAdapter;
+import com.yoyo.finalproject.UI.adapters.FavoriteTvAdapter;
 import com.yoyo.finalproject.UI.adapters.clickListeners.OnItemClickListener;
 import com.yoyo.finalproject.data.local.models.FavoriteMovie;
 import com.yoyo.finalproject.data.local.models.FavoriteTv;
@@ -32,6 +34,7 @@ public class FavoriteMovieFragment extends Fragment implements OnItemClickListen
     private RecyclerView recyclerView;
     private Realm backgroundThreadRealm;
     private FavoriteMovieAdapter adapter;
+    private TextView tvError;
 
 
     public FavoriteMovieFragment() {
@@ -52,19 +55,44 @@ public class FavoriteMovieFragment extends Fragment implements OnItemClickListen
 
         View view = inflater.inflate(R.layout.fragment_favorite_movie, container, false);
         recyclerView = view.findViewById(R.id.rv_favorite);
+        tvError = view.findViewById(R.id.tv_error);
 
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
         List<FavoriteMovie> favoriteMovies = (List) backgroundThreadRealm.where(FavoriteMovie.class).findAll();
+        if (favoriteMovies.size() == 0) {
+            tvError.setVisibility(View.VISIBLE);
+            tvError.setText(R.string.no_favorite);
+        } else {
+//            Log.d("Favorite Movies", favoriteMovies.get(0).getTitle());
+            adapter = new FavoriteMovieAdapter(favoriteMovies);
+//            Log.d("Adapter", adapter.toString());
+            adapter.setClickListener(FavoriteMovieFragment.this);
+            adapter.notifyDataSetChanged();
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(linearLayoutManager);
+            tvError.setVisibility(View.GONE);
+        }
 
-        Log.d("Favorite Movies", favoriteMovies.get(0).getTitle());
-        adapter = new FavoriteMovieAdapter(favoriteMovies);
-        Log.d("Adapter", adapter.toString());
-        adapter.setClickListener(FavoriteMovieFragment.this);
-        adapter.notifyDataSetChanged();
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(linearLayoutManager);
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        List<FavoriteMovie> favoriteMovies = (List) backgroundThreadRealm.where(FavoriteMovie.class).findAll();
+        if (favoriteMovies.size() == 0) {
+            tvError.setVisibility(View.VISIBLE);
+            tvError.setText(R.string.no_favorite);
+        } else {
+            adapter = new FavoriteMovieAdapter(favoriteMovies);
+            adapter.setClickListener(FavoriteMovieFragment.this);
+            adapter.notifyDataSetChanged();
+            recyclerView.setAdapter(adapter);
+            tvError.setVisibility(View.GONE);
+        }
+
     }
 
 
@@ -75,17 +103,17 @@ public class FavoriteMovieFragment extends Fragment implements OnItemClickListen
 
     @Override
     public void onClick(Movie movie) {
+
+    }
+
+    @Override
+    public void onClick(FavoriteMovie movie) {
         Intent detailActivity = new Intent(getContext(), DetailActivity.class);
         detailActivity.putExtra("ID", movie.getId());
         detailActivity.putExtra("TITLE", movie.getTitle());
         detailActivity.putExtra("POSTER_PATH", movie.getPosterPath(ImageSize.W154));
         detailActivity.putExtra("SELECTED_FRAGMENT", "movie");
         startActivity(detailActivity);
-    }
-
-    @Override
-    public void onClick(FavoriteMovie movie) {
-
     }
 
     @Override
