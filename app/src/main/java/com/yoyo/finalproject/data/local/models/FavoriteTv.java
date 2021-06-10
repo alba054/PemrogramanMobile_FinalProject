@@ -7,7 +7,7 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
-public class FavoriteMovie extends RealmObject {
+public class FavoriteTv extends RealmObject {
     @PrimaryKey private int id;
     @Required private String title;
     private String posterPath;

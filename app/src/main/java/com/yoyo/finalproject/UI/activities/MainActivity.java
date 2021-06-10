@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.yoyo.finalproject.R;
 //import com.yoyo.finalproject.UI.fragments.FavoriteFragment;
+import com.yoyo.finalproject.UI.fragments.FavoriteFragment;
 import com.yoyo.finalproject.UI.fragments.MainFragment;
 
 public class MainActivity extends AppCompatActivity
@@ -61,10 +62,10 @@ public class MainActivity extends AppCompatActivity
                 sortBy = "movie";
                 fragment = new MainFragment();
                 break;
-//            case R.id.item_favorite:
-//                setActionBar(getString(R.string.favorite), R.drawable.ic_favorite_white);
-//                fragment = new FavoriteFragment();
-//                break;
+            case R.id.item_favorite:
+                setActionBar(getString(R.string.favorite), R.drawable.ic_favorite_white);
+                fragment = new FavoriteFragment();
+                break;
         }
         if (fragment != null) {
             // Method that handle which data to show base on @sortBy params

@@ -1,59 +1,78 @@
-//package com.yoyo.finalproject.UI.fragments;
+package com.yoyo.finalproject.UI.fragments;
+
+import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.yoyo.finalproject.R;
+import com.yoyo.finalproject.UI.adapters.ViewPagerAdapter;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
+
+
+public class FavoriteFragment extends Fragment {
+
+    public FavoriteFragment() {
+        // Required empty public constructor
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_favorite, container, false);
+
+        ViewPager2 viewPager = rootView.findViewById(R.id.vp_fav);
+        viewPager.setAdapter(new ViewPagerAdapter(getActivity()));
+
+        TabLayout tabLayout = rootView.findViewById(R.id.tab_fav);
+        new TabLayoutMediator(tabLayout, viewPager,
+                (tab, position) -> tab.setText("OBJECT " + (position + 1))
+        ).attach();
+
+
+        (tabLayout.getTabAt(0)).setText("Movie");
+        (tabLayout.getTabAt(1)).setText("TV Show");
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+//                if (tab.getPosition() == 0) {
+//                    Fragment fragment = new FavoriteMovieFragment();
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString("SORT_BY", "movie");
+//                    fragment.setArguments(bundle);
 //
-//import android.content.Intent;
-//import android.os.Bundle;
-//
-//import androidx.annotation.NonNull;
-//import androidx.annotation.Nullable;
-//import androidx.fragment.app.Fragment;
-//import androidx.recyclerview.widget.GridLayoutManager;
-//import androidx.recyclerview.widget.RecyclerView;
-//
-//import android.view.LayoutInflater;
-//import android.view.View;
-//import android.view.ViewGroup;
-//import android.widget.TextView;
-//
-//import com.yoyo.finalproject.R;
-//import com.yoyo.finalproject.UI.activities.DetailActivity;
-//import com.yoyo.finalproject.UI.adapters.FavoriteAdapter;
-//import com.yoyo.finalproject.UI.adapters.clickListeners.OnFavoriteClickListener;
-//import com.yoyo.finalproject.data.local.FavoriteHelper;
-//import com.yoyo.finalproject.data.models.Favorite;
-//
-//public class FavoriteFragment extends Fragment implements OnFavoriteClickListener {
-//
-//    private FavoriteHelper helper;
-//    private TextView tvError;
-//
-//    @Nullable
-//    @Override
-//    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        View view = inflater.inflate(R.layout.fragment_favorite, container, false);
-//        helper = new FavoriteHelper(getContext());
-//        tvError = view.findViewById(R.id.tv_error);
-//        RecyclerView recyclerView = view.findViewById(R.id.rv_favorite);
-//        setRecyclerView(recyclerView);
-//        return view;
-//    }
-//
-//    private void setRecyclerView(RecyclerView recyclerView) {
-//        if (helper.selectAll().isEmpty()) {
-//            tvError.setText(getString(R.string.favorite_empty));
-//        } else {
-//            tvError.setVisibility(View.GONE);
-//            FavoriteAdapter adapter = new FavoriteAdapter(helper.selectAll());
-//            adapter.setClickListener(FavoriteFragment.this);
-//            recyclerView.setAdapter(adapter);
-//            recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
-//        }
-//    }
-//
-//    @Override
-//    public void onClick(Favorite favorite) {
-//        Intent detailActivity = new Intent(getContext(), DetailActivity.class);
-//        detailActivity.putExtra("ID", favorite.getId());
-//        detailActivity.putExtra("SELECTED_FRAGMENT", "favorite");
-//        startActivity(detailActivity);
-//    }
-//}
+//                } else {
+//                    Fragment fragment = new FavoriteTvFragment();
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString("SORT_BY", "tv_show");
+//                    fragment.setArguments(bundle);
+//                }
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        return rootView;
+    }
+
+
+}

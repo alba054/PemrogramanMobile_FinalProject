@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+
 import com.bumptech.glide.Glide;
 import com.yoyo.finalproject.ImageSize;
 import com.yoyo.finalproject.R;
@@ -25,6 +26,9 @@ import com.yoyo.finalproject.data.api.repository.MovieRepository;
 import com.yoyo.finalproject.data.api.repository.TvShowRepository;
 import com.yoyo.finalproject.data.api.repository.callback.OnCastCallback;
 import com.yoyo.finalproject.data.api.repository.callback.OnDetailCallback;
+import com.yoyo.finalproject.data.local.models.FavoriteMovie;
+import com.yoyo.finalproject.data.local.models.FavoriteTv;
+import com.yoyo.finalproject.data.local.service.FavoriteHelper;
 import com.yoyo.finalproject.data.models.Cast;
 import com.yoyo.finalproject.data.models.Genre;
 import com.yoyo.finalproject.data.models.Movie;
@@ -34,6 +38,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
 
 public class DetailActivity extends AppCompatActivity {
     private ImageView ivBackdrop;
@@ -53,15 +60,24 @@ public class DetailActivity extends AppCompatActivity {
     private TvShowRepository tvRepo;
     private MovieRepository movieRepo;
     private ArrayList<String> genres;
-    RecyclerView rvGenre;
-    RecyclerView rvCast;
-
+    private RecyclerView rvGenre;
+    private RecyclerView rvCast;
+//    private FavoriteHelper dbService;
+    private Realm backgroundThreadRealm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-//        Realm.init(this);
+
+        Realm.init(DetailActivity.this);
+
+        String realmName = "final project";
+        RealmConfiguration config = new RealmConfiguration.Builder().allowWritesOnUiThread(true).
+                name(realmName).
+                build();
+
+        backgroundThreadRealm = Realm.getInstance(config);
 
         ivBackdrop = findViewById(R.id.iv_backdrop);
         ivPoster = findViewById(R.id.iv_poster);
@@ -82,13 +98,45 @@ public class DetailActivity extends AppCompatActivity {
         rvCast = findViewById(R.id.rv_cast);
         tvRepo = TvShowRepository.getInstance();
         movieRepo = MovieRepository.getInstance();
+//        dbService = FavoriteHelper.getInstance(backgroundThreadRealm);
     }
 
+    private FavoriteMovie filterFavMovieById(int id) {
+        RealmQuery<FavoriteMovie> query = backgroundThreadRealm.where(FavoriteMovie.class);
+        query.equalTo("id", getIntent().getIntExtra("ID", 0));
+
+        FavoriteMovie favMovie = query.findFirst();
+
+        return favMovie;
+    }
+
+    private FavoriteTv filterFavTvById(int id) {
+        RealmQuery<FavoriteTv> query = backgroundThreadRealm.where(FavoriteTv.class);
+        query.equalTo("id", getIntent().getIntExtra("ID", 0));
+
+        FavoriteTv favTv = query.findFirst();
+
+        return favTv;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.action_bar_detail_activity, menu);
         // TODO: switch favourite button state
+        String selectedFragment = getIntent().getStringExtra("SELECTED_FRAGMENT");
+        if (selectedFragment.equals("movie")) {
+            FavoriteMovie favMovie = filterFavMovieById(getIntent().getIntExtra("ID", 0));
+            if (favMovie != null) {
+                menu.findItem(R.id.item_favorite).setIcon(R.drawable.ic_favorite_checked);
+            }
+        } else {
+            FavoriteTv favTv = filterFavTvById(getIntent().getIntExtra("ID", 0));
+            if (favTv != null) {
+                menu.findItem(R.id.item_favorite).setIcon(R.drawable.ic_favorite_checked);
+            }
+        }
+
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -102,15 +150,58 @@ public class DetailActivity extends AppCompatActivity {
                 startActivity(mainActivity);
                 return true;
             case R.id.item_favorite:
-//                if (helper.isFavorite(id)) {
-//                    if (helper.delete(id) > 0) {
-//                        // TODO: Set favorite button state
-//                    }
-//                } else {
-//                    if (helper.insert(tvShow) > 0) {
-//                        // TODO: Set favorite button state
-//                    }
-//                }
+                if (getIntent().getStringExtra("SELECTED_FRAGMENT").equals("movie")) {
+                    FavoriteMovie favMovie = filterFavMovieById(getIntent().getIntExtra("ID", 0));
+
+                    if (favMovie != null) {
+                        // TODO: delete favMovie here
+                        backgroundThreadRealm.executeTransaction(transactionRealm -> {
+                            favMovie.deleteFromRealm();
+                        });
+                        item.setIcon(R.drawable.ic_favorite_unchecked);
+                    } else {
+                        FavoriteMovie movie = new FavoriteMovie();
+                        String title = getIntent().getStringExtra("TITLE");
+                        String posterPath = getIntent().getStringExtra("POSTER_PATH");
+                        int id = getIntent().getIntExtra("ID", 0);
+                        movie.setId(id);
+                        movie.setTitle(title);
+                        movie.setPosterPath(posterPath);
+
+                        backgroundThreadRealm.executeTransaction (transactionRealm -> transactionRealm.insert(movie));
+//                    dbService.insertMovie(title, posterPath, id);
+                        Log.d("Favorite Movie", movie.getTitle());
+                        item.setIcon(R.drawable.ic_favorite_checked);
+
+                    }
+                } else {
+                    FavoriteTv favTv = filterFavTvById(getIntent().getIntExtra("ID", 0));
+
+                    if (favTv != null) {
+                        // TODO: delete favMovie here
+                        backgroundThreadRealm.executeTransaction(transactionRealm -> {
+                            favTv.deleteFromRealm();
+                        });
+                        item.setIcon(R.drawable.ic_favorite_unchecked);
+                    } else {
+                        FavoriteTv tv = new FavoriteTv();
+                        String title = getIntent().getStringExtra("TITLE");
+                        String posterPath = getIntent().getStringExtra("POSTER_PATH");
+                        int id = getIntent().getIntExtra("ID", 0);
+                        tv.setId(id);
+                        tv.setTitle(title);
+                        tv.setPosterPath(posterPath);
+
+                        backgroundThreadRealm.executeTransaction (transactionRealm -> transactionRealm.insert(tv));
+//                    dbService.insertMovie(title, posterPath, id);
+                        Log.d("Favorite Movie", tv.getTitle());
+                        item.setIcon(R.drawable.ic_favorite_checked);
+                    }
+                }
+
+//                FavoriteMovie favMovie = dbService.findMovieById(getIntent().getIntExtra("ID", 0));
+
+//
                 return true;
             case R.id.item_language_setting:
                 startActivity(new Intent(Settings.ACTION_LOCALE_SETTINGS));
